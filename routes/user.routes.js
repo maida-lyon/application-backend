@@ -22,9 +22,9 @@ router.post("/login", userController.loginUser);
 router.get("/profile", userController.getProfile);
 router.get("/logout", userController.logoutUser);
 
-// ✅ Route de test GET (corrigée)
+// Route de test pour confirmer l’accès à /api/users/
 router.get("/", (req, res) => {
-  res.json({ message: "✅ API /api/users/ accessible depuis Railway" });
+  res.json({ message: "✅ Route /api/users/ accessible depuis Railway" });
 });
 
 module.exports = router;
