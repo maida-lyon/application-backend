@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 
-// === ROUTES MÉTIERS ===
+// === ROUTES MÉTIERS  (maj forcéé) ===
 router.use("/users", require("./user.routes.js"));
 router.use("/vehicules", require("./vehicule.routes.js"));
 router.use("/commandes", require("./commande.routes.js"));
