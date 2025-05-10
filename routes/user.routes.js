@@ -21,4 +21,9 @@ router.post("/login", userController.loginUser);
 router.get("/profile", userController.getProfile);
 router.get("/logout", userController.logoutUser);
 
+// ✅ Ajoute cette route de test
+router.get("/", (req, res) => {
+  res.json({ message: "✅ API /api/users accessible depuis Railway" });
+});
+
 module.exports = router;

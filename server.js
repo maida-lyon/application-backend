@@ -1,85 +1,75 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser");
-const fileUpload = require("express-fileupload");
+const helmet = require("helmet");
 const db = require("./config/db");
-const routes = require("./routes");
-const User = require("./models/User");
-const bcrypt = require("bcryptjs");
-
-dotenv.config({ path: ".env" });
-
 const app = express();
 
-// === ORIGINES AUTORISÉES (ngrok + localhost + vercel) ===
-const allowedOrigins = [
-  "http://localhost:3001",
-  "https://application-livraison.vercel.app",
-  "https://f86d-2a01-e0a-290-4d70-1120-1a46-eee8-1bf0.ngrok-free.app", // NGROK BACKEND ACTUEL
-  undefined, // Railway / Render
-];
-
-// === CONFIGURATION CORS
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) callback(null, true);
-      else callback(new Error("⛔ CORS refusé"));
-    },
-    credentials: true,
-  })
-);
-
-// === MIDDLEWARES
+// Middlewares généraux
+app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
-app.use(fileUpload());
-app.use("/uploads", express.static("uploads"));
+app.use(helmet());
 
-// === ROUTES
-app.use("/api", routes);
+// Vérification connexion à la DB PostgreSQL
+db.authenticate()
+  .then(() => {
+    console.log("✅ Connexion à PostgreSQL réussie.");
+  })
+  .catch((error) => {
+    console.error("❌ Erreur connexion PostgreSQL :", error);
+  });
 
-// === TEST DE VIE
-app.get("/", (req, res) => {
-  res.send("✅ API DeliverApp opérationnelle");
+// === ROUTES ===
+
+// Utilisateurs
+app.use("/api/users", require("./routes/user.routes"));
+
+// Authentification
+app.use("/api/auth", require("./routes/auth.routes"));
+
+// Commandes
+app.use("/api/commandes", require("./routes/commande.routes"));
+
+// Uploads (preuves, documents, etc.)
+app.use("/api/upload", require("./routes/upload.routes"));
+
+// Paiement
+app.use("/api/paiement", require("./routes/paiement.routes"));
+
+// Tracking livraison
+app.use("/api/tracking", require("./routes/tracking.routes"));
+
+// Matching missions
+app.use("/api/matching", require("./routes/matching.routes"));
+
+// Notifications
+app.use("/api/notifications", require("./routes/notification.routes"));
+
+// Chatbot ou IA
+app.use("/api/chatbot", require("./routes/ia.routes"));
+
+// Litiges
+app.use("/api/litiges", require("./routes/litige.routes"));
+
+// Factures
+app.use("/api/factures", require("./routes/invoice.routes"));
+
+// Véhicules
+app.use("/api/vehicules", require("./routes/vehicle.routes"));
+
+// Signature électronique
+app.use("/api/signature", require("./routes/signature.routes"));
+
+// Workflow livraison
+app.use("/api/workflow", require("./routes/workflow.routes"));
+
+// === ERREUR 404 si route inconnue ===
+app.use((req, res) => {
+  res.status(404).json({ message: "❌ API introuvable." });
 });
-app.get("/ping", (req, res) => {
-  res.json({ message: "pong" });
-});
 
-// === LANCEMENT SERVEUR
+// === LANCEMENT SERVEUR Railway ===
 const PORT = process.env.PORT || 5000;
-
-(async () => {
-  try {
-    await db.authenticate();
-    await db.sync({ alter: true });
-    console.log("✅ PostgreSQL connecté");
-
-    // Création auto d’un compte admin
-    const adminExists = await User.findOne({
-      where: { email: "obouceloua@gmail.com" },
-    });
-
-    if (!adminExists) {
-      await User.create({
-        nom: "Admin Principal",
-        email: "obouceloua@gmail.com",
-        telephone: "0658407152",
-        motdepasse: await bcrypt.hash("azerty123", 10),
-        role: "admin",
-        valide: true,
-        force: false,
-        documents: {},
-      });
-      console.log("✅ Compte admin créé automatiquement");
-    }
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Serveur backend lancé sur le port ${PORT}`);
-    });
-  } catch (err) {
-    console.error("❌ Erreur serveur :", err);
-  }
-})();
+app.listen(PORT, () => {
+  console.log(`✅ Serveur backend actif sur le port ${PORT}`);
+});
