@@ -1,3 +1,5 @@
+// backend/routes/index.js
+
 const express = require("express");
 const router = express.Router();
 
@@ -30,7 +32,6 @@ router.use("/admin", require("./admin.routes"));
 router.get("/", (req, res) => {
   res.send("✅ API DeliverApp opérationnelle");
 });
-
 router.get("/ping", (req, res) => {
   res.json({ message: "pong" });
 });
