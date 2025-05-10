@@ -55,7 +55,7 @@ app.use("/api/litiges", require("./routes/litige.routes"));
 app.use("/api/factures", require("./routes/invoice.routes"));
 
 // Véhicules
-app.use("/api/vehicules", require("./routes/vehicle.routes"));
+app.use("/api/vehicules", require("./routes/vehicule.routes"));
 
 // Signature électronique
 app.use("/api/signature", require("./routes/signature.routes"));
