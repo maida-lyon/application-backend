@@ -5,31 +5,32 @@ const helmet = require("helmet");
 const db = require("./config/db");
 const app = express();
 
-// === Middlewares ===
+// CORS dynamique
 app.use(
   cors({
-    origin: "*", // autorise toutes les origines (ex: ngrok)
+    origin: "*", // ⬅️ autorise tout (temporaire pour test)
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(helmet());
 
-// === Vérifie la connexion à PostgreSQL ===
+// DB check
 db.authenticate()
   .then(() => console.log("✅ Connexion à PostgreSQL réussie."))
   .catch((error) => console.error("❌ Erreur connexion PostgreSQL :", error));
 
-// === Toutes les routes ===
+// Routes
 app.use("/api", require("./routes/index"));
 
-// === Erreur 404 si aucune route ne correspond ===
+// 404
 app.use((req, res) => {
   res.status(404).json({ message: "❌ API introuvable." });
 });
 
-// === Lancement du serveur ===
+// Lancement
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Serveur backend actif sur le port ${PORT}`);
