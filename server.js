@@ -6,10 +6,13 @@ const db = require("./config/db");
 const app = express();
 
 // CORS dynamique
+const cors = require("cors");
+
 app.use(
   cors({
-    origin: "*", // ⬅️ autorise tout (temporaire pour test)
+    origin: "*", // autorise tout domaine
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
