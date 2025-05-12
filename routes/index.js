@@ -1,9 +1,7 @@
-// backend/routes/index.js
-
 const express = require("express");
 const router = express.Router();
 
-// === ROUTES MÉTIERS  (maj forcéé) ===
+// === ROUTES MÉTIERS ===
 router.use("/users", require("./user.routes.js"));
 router.use("/vehicules", require("./vehicule.routes.js"));
 router.use("/commandes", require("./commande.routes.js"));
@@ -21,7 +19,7 @@ router.use("/tracking", require("./tracking.routes.js"));
 router.use("/uploads", require("./upload.routes.js"));
 router.use("/chatbot", require("./chatbot.routes.js"));
 router.use("/signatures", require("./signature.routes.js"));
-router.use("/workflows", require("./workflow.routes.js"));
+router.use("/workflows", require("./workflow.routes.js")); // ✅ corrigé
 router.use("/notifications", require("./notification.routes.js"));
 router.use("/ia", require("./ia.routes.js"));
 
