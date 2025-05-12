@@ -6,33 +6,32 @@ const db = require("./config/db");
 
 const app = express();
 
-// ✅ CORS public pour Railway + Ngrok
+// ✅ CORS bien configuré (autorise toutes les origines)
 app.use(
   cors({
-    origin: "*", // ou remplace par "https://ton-lien-ngrok.ngrok-free.app"
+    origin: "*", // ou mets "https://xxx.ngrok-free.app" ici si tu veux restreindre
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// ✅ Middlewares globaux
 app.use(express.json());
 app.use(helmet());
 
-// ✅ Test DB PostgreSQL
+// Connexion à PostgreSQL
 db.authenticate()
   .then(() => console.log("✅ Connexion à PostgreSQL réussie."))
   .catch((error) => console.error("❌ Erreur connexion PostgreSQL :", error));
 
-// ✅ Groupement des routes
+// Toutes les routes
 app.use("/api", require("./routes/index"));
 
-// ✅ 404 si aucune route ne matche
+// 404
 app.use((req, res) => {
   res.status(404).json({ message: "❌ API introuvable." });
 });
 
-// ✅ Lancement serveur
+// Lancement serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Serveur backend actif sur le port ${PORT}`);
