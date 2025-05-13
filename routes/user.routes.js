@@ -5,7 +5,7 @@ const upload = require("../middleware/upload");
 
 console.log("user.routes.js chargé");
 
-// === Authentification ===
+// Auth
 router.post(
   "/register",
   upload.fields([
@@ -22,13 +22,12 @@ router.post("/login", userController.loginUser);
 router.get("/profile", userController.getProfile);
 router.get("/logout", userController.logoutUser);
 
+// Tests
 router.get("/test", (req, res) => {
-  res.send("Route /api/users/test OK");
+  res.send("✅ /api/users/test OK");
 });
-
-// Route de test pour confirmer l’accès à /api/users/
 router.get("/", (req, res) => {
-  res.json({ message: "✅ Route /api/users/ accessible depuis Railway" });
+  res.json({ message: "✅ /api/users/ est accessible" });
 });
 
 module.exports = router;
