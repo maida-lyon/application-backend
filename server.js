@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -7,44 +6,37 @@ const db = require("./config/db");
 
 const app = express();
 
-// ✅ CORS sécurisé : autorise Railway + ton lien Ngrok uniquement
-const allowedOrigins = [
-  "https://application-backend.up.railway.app",
-  "https://1e0a-2a01-e0a-290-4d70-99cf-3996-89a0-a262.ngrok-free.app", // ton Ngrok
-  "http://localhost:3000", // pour tests locaux
-];
+// ✅ CORS précis pour Railway + ton Ngrok
+const FRONTEND_URL =
+  "https://c339-2a04-cc00-1071-b327-8c3b-ddb2-4167-8ace.ngrok-free.app";
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("CORS non autorisé"));
-    },
+    origin: FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
-app.use(express.json());
+// 🔐 Sécurité + JSON parser
 app.use(helmet());
+app.use(express.json());
 
-// ✅ Vérifie la connexion PostgreSQL
+// ✅ Connexion DB
 db.authenticate()
-  .then(() => console.log("✅ Connexion à PostgreSQL réussie."))
-  .catch((error) => console.error("❌ Erreur connexion PostgreSQL :", error));
+  .then(() => console.log("✅ Connexion PostgreSQL réussie"))
+  .catch((error) => console.error("❌ Erreur PostgreSQL :", error));
 
-// ✅ Routes regroupées
+// ✅ Routes groupées
 app.use("/api", require("./routes/index"));
 
-// ✅ Gestion 404
+// ❌ Route 404 si rien n’est trouvé
 app.use((req, res) => {
-  res.status(404).json({ message: "❌ API introuvable." });
+  res.status(404).json({ message: "❌ API introuvable" });
 });
 
-// ✅ Lancement serveur
+// ✅ Port Railway
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`✅ Serveur backend actif sur le port ${PORT}`);
