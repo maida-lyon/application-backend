@@ -6,8 +6,7 @@ const db = require("./config/db");
 
 const app = express();
 
-// ✅ CORS précis pour Railway + Vercel
-const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
+const FRONTEND_URL = "https://application-livraison-pwem.vercel.app"; // 🔁 ton vrai lien Vercel ici
 
 app.use(
   cors({
@@ -18,24 +17,19 @@ app.use(
   })
 );
 
-// 🔐 Sécurité + JSON parser
 app.use(helmet());
 app.use(express.json());
 
-// ✅ Connexion DB
 db.authenticate()
   .then(() => console.log("✅ Connexion PostgreSQL réussie"))
   .catch((error) => console.error("❌ Erreur PostgreSQL :", error));
 
-// ✅ Routes groupées
-app.use("/api", require("./routes/index"));
+app.use("/api", require("./routes/index")); // ✅ attention, c’est "/api"
 
-// ❌ Route 404 si rien n’est trouvé
 app.use((req, res) => {
   res.status(404).json({ message: "❌ API introuvable" });
 });
 
-// ✅ Port Railway
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`✅ Serveur backend actif sur le port ${PORT}`);
