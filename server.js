@@ -6,9 +6,8 @@ const db = require("./config/db");
 
 const app = express();
 
-// ✅ CORS précis pour Railway + ton Ngrok
-const FRONTEND_URL =
-  "https://c339-2a04-cc00-1071-b327-8c3b-ddb2-4167-8ace.ngrok-free.app";
+// ✅ CORS précis pour Railway + Vercel
+const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
 
 app.use(
   cors({
