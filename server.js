@@ -6,7 +6,8 @@ const db = require("./config/db");
 
 const app = express();
 
-const FRONTEND_URL = "https://application-livraison-pwem.vercel.app"; // 🔁 ton vrai lien Vercel ici
+const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
+// 🔁 ton vrai lien Vercel ici
 
 app.use(
   cors({
