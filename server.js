@@ -6,8 +6,11 @@ const db = require("./config/db");
 
 const app = express();
 
-const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
-// 🔁 ton vrai lien Vercel ici
+// ✅ Ajout des domaines front autorisés pour CORS
+const FRONTEND_URL = [
+  "https://application-livraison-pwem.vercel.app",
+  "https://application-livraison.vercel.app",
+];
 
 app.use(
   cors({
@@ -18,19 +21,24 @@ app.use(
   })
 );
 
+// ✅ Sécurité + JSON parser
 app.use(helmet());
 app.use(express.json());
 
+// ✅ Connexion PostgreSQL
 db.authenticate()
   .then(() => console.log("✅ Connexion PostgreSQL réussie"))
   .catch((error) => console.error("❌ Erreur PostgreSQL :", error));
 
-app.use("/api", require("./routes/index")); // ✅ attention, c’est "/api"
+// ✅ Routing principal : toutes les routes passent sous /api
+app.use("/api", require("./routes/index"));
 
+// ❌ Gestion des routes inconnues (404)
 app.use((req, res) => {
   res.status(404).json({ message: "❌ API introuvable" });
 });
 
+// ✅ Port Railway ou local
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`✅ Serveur backend actif sur le port ${PORT}`);
