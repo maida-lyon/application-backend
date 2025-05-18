@@ -6,10 +6,9 @@ const db = require("./config/db");
 
 const app = express();
 
-// 🔐 Met ici exactement ton vrai domaine Vercel (frontend)
+// ✅ Autoriser le front Vercel
 const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
 
-// ✅ Middleware CORS avec l'URL autorisée
 app.use(
   cors({
     origin: FRONTEND_URL,
@@ -19,19 +18,19 @@ app.use(
   })
 );
 
-// ✅ Sécurité + JSON
+// 🔐 Sécurité et JSON
 app.use(helmet());
 app.use(express.json());
 
-// ✅ Connexion DB
+// ✅ Connexion DB PostgreSQL Railway
 db.authenticate()
-  .then(() => console.log("✅ Connexion PostgreSQL réussie"))
+  .then(() => console.log("✅ Connexion PostgreSQL Railway réussie"))
   .catch((error) => console.error("❌ Erreur PostgreSQL :", error));
 
-// ✅ Routes (commence bien par /api)
+// ✅ Toutes tes routes API
 app.use("/api", require("./routes/index"));
 
-// ✅ Gestion 404
+// ❌ 404 par défaut
 app.use((req, res) => {
   res.status(404).json({ message: "❌ API introuvable" });
 });
