@@ -6,20 +6,21 @@ const db = require("./config/db");
 
 const app = express();
 
-const FRONTEND_URL = "https://application-livraison-pwem.vercel.app"; // Ton frontend Vercel
+// IMPORTANT : ce lien doit être exactement celui du frontend Vercel
+const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
 
-// Middleware CORS complet
 app.use(
   cors({
     origin: FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-    optionsSuccessStatus: 200,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 );
 
-// Gérer les requêtes OPTIONS (préflight)
+// Pour les requêtes preflight CORS (très important)
 app.options("*", cors());
 
 app.use(helmet());
@@ -27,9 +28,9 @@ app.use(express.json());
 
 db.authenticate()
   .then(() => console.log("✅ Connexion PostgreSQL réussie"))
-  .catch((error) => console.error("❌ Erreur PostgreSQL :", error));
+  .catch((err) => console.error("❌ Erreur PostgreSQL :", err));
 
-app.use("/api", require("./routes/index"));
+app.use("/api", require("./routes/index")); // NE PAS TOUCHER
 
 app.use((req, res) => {
   res.status(404).json({ message: "❌ API introuvable" });
