@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -6,9 +5,14 @@ const db = require("./config/db");
 
 const app = express();
 
-// IMPORTANT : ce lien doit être exactement celui du frontend Vercel
-const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
+// ✅ Autoriser tous les domaines Vercel utilisés
+const FRONTEND_URL = [
+  "https://application-livraison-pwem.vercel.app",
+  "https://application-livraison-pwem-git-main-maida-lyons-projects.vercel.app",
+  "https://application-livraison-pwem-ciocove8o-maida-lyons-projects.vercel.app",
+];
 
+// ✅ Middleware CORS configuré proprement
 app.use(
   cors({
     origin: FRONTEND_URL,
@@ -20,21 +24,19 @@ app.use(
   })
 );
 
-// Pour les requêtes preflight CORS (très important)
+// ✅ Important pour les requêtes de pré-vérification (OPTIONS)
 app.options("*", cors());
 
 app.use(helmet());
 app.use(express.json());
 
+// Connexion à PostgreSQL
 db.authenticate()
   .then(() => console.log("✅ Connexion PostgreSQL réussie"))
   .catch((err) => console.error("❌ Erreur PostgreSQL :", err));
 
+// Routes
 app.use("/api", require("./routes/index")); // NE PAS TOUCHER
-
-app.use((req, res) => {
-  res.status(404).json({ message: "❌ API introuvable" });
-});
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
