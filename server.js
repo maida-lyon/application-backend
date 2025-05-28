@@ -5,14 +5,9 @@ const db = require("./config/db");
 
 const app = express();
 
-// ✅ Autoriser tous les domaines Vercel utilisés
-const FRONTEND_URL = [
-  "https://application-livraison-pwem.vercel.app",
-  "https://application-livraison-pwem-git-main-maida-lyons-projects.vercel.app",
-  "https://application-livraison-pwem-ciocove8o-maida-lyons-projects.vercel.app",
-];
+// CORS CONFIG
+const FRONTEND_URL = "https://application-livraison-pwem.vercel.app";
 
-// ✅ Middleware CORS configuré proprement
 app.use(
   cors({
     origin: FRONTEND_URL,
@@ -24,19 +19,17 @@ app.use(
   })
 );
 
-// ✅ Important pour les requêtes de pré-vérification (OPTIONS)
+// OPTIONS pour toutes les routes (très important)
 app.options("*", cors());
 
 app.use(helmet());
 app.use(express.json());
 
-// Connexion à PostgreSQL
 db.authenticate()
   .then(() => console.log("✅ Connexion PostgreSQL réussie"))
   .catch((err) => console.error("❌ Erreur PostgreSQL :", err));
 
-// Routes
-app.use("/api", require("./routes/index")); // NE PAS TOUCHER
+app.use("/api", require("./routes/index"));
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
